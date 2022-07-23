@@ -2,7 +2,7 @@
 
 namespace TinyRenderer_CSharp
 {
-    public sealed class TriangleInfo
+    public struct TriangleInfo
     {
         public readonly VertexInfo Vertex0;
         public readonly VertexInfo Vertex1;
@@ -31,7 +31,7 @@ namespace TinyRenderer_CSharp
             }
         }
 
-        public sealed class VertexInfo
+        public struct VertexInfo
         {
             public readonly Vector3 Vertex;
             public readonly Vector2 UV;
