@@ -10,28 +10,44 @@ namespace TinyRenderer_CSharp
     {
         static void Main(string[] args)
         {
-            int width = 800;
-            int height = 800;
-
+            // Initiate frame
+            int width = 2000;
+            int height = 2000;
             Image<Rgba32> image = new(width + 1, height + 1);  // Gird 1 to 800 only got 799 pixels
 
+            // Load the model
             var model = Model.LoadModel(@"./obj/african_head.obj");
 
+            Vector3 lightDir = new(0, 0, -1);
             Vector2[] screenCoord = new Vector2[3];
+            Vector3[] worldCoord = new Vector3[3];
 
             foreach (var item in model)
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    Vector3 worldCoord = item[i].Vertex;
-                    screenCoord[i] = new Vector2((worldCoord.X + 1) * width / 2, (worldCoord.Y + 1) * height / 2);
+                    Vector3 v = item[i].Vertex;
+                    screenCoord[i] = new Vector2((v.X + 1) * width / 2, (v.Y + 1) * height / 2);
+                    worldCoord[i] = v;
                 }
 
+                Vector3 normal = Vector3.Cross(worldCoord[2] - worldCoord[0], worldCoord[1] - worldCoord[0]);
+                normal = Vector3.Normalize(normal);
+                float intensity = Vector3.Dot(normal, lightDir);
+
+                if (intensity > 0)
+                {
+                    byte rgb = (byte)(intensity * 255);
+                    DrawTriangle(screenCoord, ref image, new Rgba32(rgb, rgb, rgb, 255));
+                }
+
+                /*
+                // Draw all the triangles with random color
                 byte r = (byte)(new Random()).Next(255);  // Rgb value should be byte type
                 byte g = (byte)(new Random()).Next(255);
                 byte b = (byte)(new Random()).Next(255);
-
                 DrawTriangle(screenCoord, ref image, new Rgba32(r, g, b, 255));
+                */
             }
 
 
@@ -107,7 +123,6 @@ namespace TinyRenderer_CSharp
             }
             */
         }
-
 
         // Bresenham’s Line Drawing Algorithm
         static void DrawLine(int x0, int y0, int x1, int y1, ref Image<Rgba32> image, Rgba32 color)
