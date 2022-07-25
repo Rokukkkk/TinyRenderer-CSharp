@@ -10,7 +10,7 @@ namespace TinyRenderer_CSharp
     {
         const int width = 2000;
         const int height = 2000;
-        const bool useTexture = false;
+        const bool useTexture = true;  // Use texture or not
 
         static void Main(string[] args)
         {
