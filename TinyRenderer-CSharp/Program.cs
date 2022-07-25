@@ -10,7 +10,7 @@ namespace TinyRenderer_CSharp
     {
         const int width = 2000;
         const int height = 2000;
-        const bool useTexture = true;
+        const bool useTexture = false;
 
         static void Main(string[] args)
         {
@@ -37,7 +37,7 @@ namespace TinyRenderer_CSharp
                 for (int i = 0; i < 3; i++)
                 {
                     worldCoord[i] = item[i].Vertex;
-                    screenCoord[i] = World2Screen(item[i].Vertex);
+                    screenCoord[i] = World2Screen(ref worldCoord[i]);
                     uv[i] = item[i].UV;
                 }
 
@@ -47,7 +47,7 @@ namespace TinyRenderer_CSharp
 
                 if (intensity > 0)
                 {
-                    DrawTriangle(screenCoord, ref uv, ref zBuffer, ref image, ref texture, intensity);
+                    DrawTriangle(ref screenCoord, ref uv, ref zBuffer, ref image, ref texture, intensity);
                 }
             }
 
@@ -57,30 +57,30 @@ namespace TinyRenderer_CSharp
 
         }
 
-        static void DrawTriangle(Vector3[] pts, ref Vector2[] uv, ref float[] zBuffer, ref Image<Rgba32> image, ref Image<Rgba32> texture, float intensity)
+        static void DrawTriangle(ref Vector3[] screenCoord, ref Vector2[] uv, ref float[] zBuffer, ref Image<Rgba32> image, ref Image<Rgba32> texture, float intensity)
         {
-            Vector2 bboxMin = new(width, height);
+            Vector2 bboxMin = new(width - 1, height - 1);
             Vector2 bboxMax = new(0, 0);
 
-            bboxMin.X = (new float[] { bboxMin.X, pts[0].X, pts[1].X, pts[2].X }).Min();
-            bboxMin.Y = (new float[] { bboxMin.Y, pts[0].Y, pts[1].Y, pts[2].Y }).Min();
-            bboxMax.X = (new float[] { bboxMax.X, pts[0].X, pts[1].X, pts[2].X }).Max();
-            bboxMax.Y = (new float[] { bboxMax.Y, pts[0].Y, pts[1].Y, pts[2].Y }).Max();
+            bboxMin.X = (new float[] { bboxMin.X, screenCoord[0].X, screenCoord[1].X, screenCoord[2].X }).Min();
+            bboxMin.Y = (new float[] { bboxMin.Y, screenCoord[0].Y, screenCoord[1].Y, screenCoord[2].Y }).Min();
+            bboxMax.X = (new float[] { bboxMax.X, screenCoord[0].X, screenCoord[1].X, screenCoord[2].X }).Max();
+            bboxMax.Y = (new float[] { bboxMax.Y, screenCoord[0].Y, screenCoord[1].Y, screenCoord[2].Y }).Max();
 
 
-            for (int i = (int)bboxMin.X; i < bboxMax.X; i++)
+            for (int i = (int)bboxMin.X; i <= bboxMax.X; i++)  // Should be "<=bbox" rather than "<", 
             {
-                for (int j = (int)bboxMin.Y; j < bboxMax.Y; j++)
+                for (int j = (int)bboxMin.Y; j <= bboxMax.Y; j++)  // because it will cause black strip in high-res
                 {
                     Vector3 p = new(i, j, 0);
-                    Vector3 baryCoord = GetBarycentric(pts, p);
+                    Vector3 baryCoord = GetBarycentric(ref screenCoord, p);
                     Vector2 pUV;
                     if (baryCoord.X < 0 || baryCoord.Y < 0 || baryCoord.Z < 0) continue;
 
                     // Z-interpolation
-                    float zInterpolation = baryCoord.X * pts[0].Z + baryCoord.Y * pts[1].Z + baryCoord.Z * pts[2].Z;
+                    float zInterpolation = baryCoord.X * screenCoord[0].Z + baryCoord.Y * screenCoord[1].Z + baryCoord.Z * screenCoord[2].Z;
                     pUV = uv[0] * baryCoord.X + uv[1] * baryCoord.Y + uv[2] * baryCoord.Z;
-                    if (zInterpolation > zBuffer[(int)(p.X + p.Y * width)])
+                    if (zInterpolation >= zBuffer[i + j * width])
                     {
                         zBuffer[i + j * width] = zInterpolation;
                         Rgba32 color = texture.GetColor(pUV);
@@ -104,14 +104,14 @@ namespace TinyRenderer_CSharp
         }
 
         // Calculate barycentric coordinates
-        static Vector3 GetBarycentric(Vector3[] pts, Vector3 p)
+        static Vector3 GetBarycentric(ref Vector3[] screenCoord, Vector3 p)
         {
-            float xa = pts[0].X;
-            float ya = pts[0].Y;
-            float xb = pts[1].X;
-            float yb = pts[1].Y;
-            float xc = pts[2].X;
-            float yc = pts[2].Y;
+            float xa = screenCoord[0].X;
+            float ya = screenCoord[0].Y;
+            float xb = screenCoord[1].X;
+            float yb = screenCoord[1].Y;
+            float xc = screenCoord[2].X;
+            float yc = screenCoord[2].Y;
             float x = p.X;
             float y = p.Y;
 
@@ -122,7 +122,7 @@ namespace TinyRenderer_CSharp
             return new Vector3(alpha, beta, gamma);
         }
 
-        static Vector3 World2Screen(Vector3 world)
+        static Vector3 World2Screen(ref Vector3 world)
         {
             return new Vector3((world.X + 1) * width / 2, (world.Y + 1) * height / 2, world.Z);
         }
