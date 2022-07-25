@@ -12,11 +12,6 @@
 - [Lesson 4](https://github.com/Rokukkkk/TinyRenderer-CSharp/tree/d601be7e00f4e002449fda7f4e55caa27ebbb9c3)
 - [Lesson 5](https://github.com/Rokukkkk/TinyRenderer-CSharp/tree/d3bf54b401a3a4609bb980f01bb6236959db4e76)
 
-<img src="./_img/MeshLine.png" width=32% height=32%>
-<img src="./_img/FlatShading.png" width=32% height=32%>
-<img src="./_img/FlatShading_Tex.png" width=32% height=32%>
+<img src="./_img/MeshLine.png" width=32% height=32%><img src="./_img/FlatShading.png" width=32% height=32%><img src="./_img/FlatShading_Tex.png" width=32% height=32%>
 
-
-<img src="./_img/GouraudShading_Tex.png" width=32% height=32%>
-<img src="./_img/Perspective.png" width=32% height=32%>
-<img src="./_img/PhongShading.png" width=32% height=32%>
+<img src="./_img/GouraudShading_Tex.png" width=32% height=32%><img src="./_img/Perspective.png" width=32% height=32%><img src="./_img/PhongShading.png" width=32% height=32%>
