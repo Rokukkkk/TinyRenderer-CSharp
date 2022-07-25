@@ -10,11 +10,13 @@ namespace TinyRenderer_CSharp
     {
         const int width = 2000;
         const int height = 2000;
+        const bool useTexture = true;
 
         static void Main(string[] args)
         {
+
             // Initiate frame
-            Image<Rgba32> image = new(width, height);  // Gird 1 to 800 only got 799 pixels
+            Image<Rgba32> image = new(width, height);
 
             // Load the model
             var model = Model.LoadModel(@"./obj/african_head.obj");
@@ -82,6 +84,10 @@ namespace TinyRenderer_CSharp
                     {
                         zBuffer[i + j * width] = zInterpolation;
                         Rgba32 color = texture.GetColor(pUV);
+                        if (!useTexture)
+                        {
+                            color = Color.White;
+                        }
                         color.R = (byte)(color.R * intensity);
                         color.G = (byte)(color.G * intensity);
                         color.B = (byte)(color.B * intensity);
