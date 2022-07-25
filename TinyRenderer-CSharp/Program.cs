@@ -10,11 +10,14 @@ namespace TinyRenderer_CSharp
     {
         const int width = 2000;
         const int height = 2000;
-        const bool useTexture = true;  // Use texture or not
+        const int depth = 255;
+
+        static readonly bool useTexture = true;  // Use texture or not
+        static Vector3 lightDir = new(0, 0, -1);
+        static Vector3 cameraPos = new(0, 0, 3);
 
         static void Main(string[] args)
         {
-
             // Initiate frame
             Image<Rgba32> image = new(width, height);
 
@@ -22,12 +25,17 @@ namespace TinyRenderer_CSharp
             var model = Model.LoadModel(@"./obj/african_head.obj");
             var texture = Texture.LoadTexture(@"./obj/african_head_diffuse.tga");
 
+            // Matrix calls
+            Matrix4x4 modelMatrix = GetModelMatrix();
+            Matrix4x4 viewMartix = GetViewMatrix();
+            Matrix4x4 projectionMartix = GetProjectionMatrix();
+            Matrix4x4 viewportMartix = GetViewportMatrix(width / 8, height / 8, width * 3 / 4, height * 3 / 4);
+
             // Z-Buffer
             float[] zBuffer = new float[width * height];
             for (int i = 0; i < width * height; i++) zBuffer[i] = float.MinValue;
 
             // Render
-            Vector3 lightDir = new(0, 0, -1);
             Vector3[] screenCoord = new Vector3[3];
             Vector3[] worldCoord = new Vector3[3];
             Vector2[] uv = new Vector2[3];
@@ -37,7 +45,7 @@ namespace TinyRenderer_CSharp
                 for (int i = 0; i < 3; i++)
                 {
                     worldCoord[i] = item[i].Vertex;
-                    screenCoord[i] = World2Screen(ref worldCoord[i]);
+                    screenCoord[i] = Homo2Vertices(viewportMartix * GetProjectionDivision(projectionMartix * viewMartix * modelMatrix * Local2Homo(ref worldCoord[i])));
                     uv[i] = item[i].UV;
                 }
 
@@ -70,7 +78,7 @@ namespace TinyRenderer_CSharp
 
             for (int i = (int)bboxMin.X; i <= bboxMax.X; i++)  // Should be "<=bbox" rather than "<", 
             {
-                for (int j = (int)bboxMin.Y; j <= bboxMax.Y; j++)  // because it will cause black strip in high-res
+                for (int j = (int)bboxMin.Y; j <= bboxMax.Y; j++)  // because it will cause black strip at hi-res
                 {
                     Vector3 p = new(i, j, 0);
                     Vector3 baryCoord = GetBarycentric(ref screenCoord, p);
@@ -122,9 +130,64 @@ namespace TinyRenderer_CSharp
             return new Vector3(alpha, beta, gamma);
         }
 
-        static Vector3 World2Screen(ref Vector3 world)
+        // Homogeneous coordinates
+        static Matrix4x4 Local2Homo(ref Vector3 local)
         {
-            return new Vector3((world.X + 1) * width / 2, (world.Y + 1) * height / 2, world.Z);
+            Matrix4x4 m = new();
+            m.M11 = local.X;
+            m.M21 = local.Y;
+            m.M31 = local.Z;
+            m.M41 = 1.0f;
+
+            return m;
+        }
+
+        // MVP
+        static Matrix4x4 GetModelMatrix()
+        {
+            return Matrix4x4.Identity;
+        }
+
+        static Matrix4x4 GetViewMatrix()
+        {
+            return Matrix4x4.Identity;
+        }
+
+        static Matrix4x4 GetProjectionMatrix()
+        {
+            Matrix4x4 projection = Matrix4x4.Identity;
+            projection.M43 = -1 / cameraPos.Z;
+
+            return projection;
+        }
+
+        static Matrix4x4 GetProjectionDivision(Matrix4x4 m)
+        {
+            m.M11 /= m.M41;
+            m.M21 /= m.M41;
+            m.M31 /= m.M41;
+            m.M41 = 1.0f;
+
+            return m;
+        }
+
+        static Matrix4x4 GetViewportMatrix(int x, int y, int w, int h)
+        {
+            Matrix4x4 m = Matrix4x4.Identity;
+            m.M14 = x + w / 2.0f;
+            m.M24 = y + h / 2.0f;
+            m.M34 = depth / 2.0f;
+
+            m.M11 = w / 2.0f;
+            m.M22 = h / 2.0f;
+            m.M33 = depth / 2.0f;
+
+            return m;
+        }
+
+        static Vector3 Homo2Vertices(Matrix4x4 m)
+        {
+            return new Vector3(m.M11, m.M21, m.M31);
         }
     }
 }
