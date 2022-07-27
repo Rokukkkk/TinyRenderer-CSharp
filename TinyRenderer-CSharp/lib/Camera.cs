@@ -20,4 +20,3 @@ namespace TinyRenderer_CSharp.Lib
         }
     }
 }
-

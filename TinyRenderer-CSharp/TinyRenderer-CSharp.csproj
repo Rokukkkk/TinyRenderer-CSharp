@@ -23,4 +23,7 @@
     <Folder Include="lib\" />
     <Folder Include="shaders\" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="shaders\AShader.cs" />
+  </ItemGroup>
 </Project>

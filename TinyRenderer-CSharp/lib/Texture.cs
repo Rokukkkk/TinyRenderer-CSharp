@@ -30,10 +30,5 @@ namespace TinyRenderer_CSharp.Lib
 
         public static float GetSpecular(this Image<Rgba32> image, Vector2 uv) =>
             image[(int)(uv.X * image.Width), (int)(uv.Y * image.Height)].R;
-
-
-        public static void SetColor(this Image<Rgba32> image, Vector2 uv, Rgba32 color) =>
-            image[(int)(uv.X * image.Width), (int)(uv.Y * image.Height)] = color;
     }
 }
-
