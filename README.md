@@ -5,7 +5,7 @@
 
 <div align=center><img src="./_img/Cam.png" width=30% height=30% ></div>
 
-***
+</br>
 
 ## Snapshots for every lessons:
 
@@ -13,7 +13,8 @@
 - [Lesson 2](https://github.com/Rokukkkk/TinyRenderer-CSharp/tree/db9f14698edb121e7924eb0ee81cf96749b73a49)
 - [Lesson 3](https://github.com/Rokukkkk/TinyRenderer-CSharp/tree/5c03f2c54ec89f191e95513779973e816b768d05)
 - [Lesson 4](https://github.com/Rokukkkk/TinyRenderer-CSharp/tree/d601be7e00f4e002449fda7f4e55caa27ebbb9c3)
-- [Lesson 5](https://github.com/Rokukkkk/TinyRenderer-CSharp/tree/d3bf54b401a3a4609bb980f01bb6236959db4e76)
+- [Lesson 5](https://github.com/Rokukkkk/TinyRenderer-CSharp/tree/d8cbb5a8ab2a83dfd12230860932fcc7f854af8a)
+- [Refactored](https://github.com/Rokukkkk/TinyRenderer-CSharp/tree/515cba9f58f360131daf74de0fd5226c03584dda)
 
 <img src="./_img/MeshLine.png" width=32% height=32%><img src="./_img/FlatShading.png" width=32% height=32%><img src="./_img/FlatShading_Tex.png" width=32% height=32%>
 
