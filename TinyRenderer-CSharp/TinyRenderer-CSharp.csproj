@@ -13,8 +13,14 @@
     <None Remove="SixLabors.ImageSharp.Drawing" />
     <None Remove=".DS_Store" />
     <None Remove="SkiaSharp" />
+    <None Remove="lib\" />
+    <None Remove="Shad%27er%27s\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="SixLabors.ImageSharp" Version="2.1.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="lib\" />
+    <Folder Include="shaders\" />
   </ItemGroup>
 </Project>

@@ -4,7 +4,7 @@ using SixLabors.ImageSharp.Processing;
 
 using System.Numerics;
 
-namespace TinyRenderer_CSharp
+namespace TinyRenderer_CSharp.Lib
 {
     public static class Texture
     {

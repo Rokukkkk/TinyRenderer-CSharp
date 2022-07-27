@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace TinyRenderer_CSharp
+namespace TinyRenderer_CSharp.Lib
 {
     public struct Camera
     {

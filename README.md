@@ -1,11 +1,14 @@
 # TinyRenderer-CSharp
- >Original repository:
- >[ssloy/tinyrenderer : A brief computer graphics / rendering course](https://github.com/ssloy/tinyrenderer)
+
+> Original repository:
+> [ssloy/tinyrenderer : A brief computer graphics / rendering course](https://github.com/ssloy/tinyrenderer)
 
 <div align=center><img src="./_img/Cam.png" width=30% height=30% ></div>
 
 ***
- ## Snapshots for every lessons:
+
+## Snapshots for every lessons:
+
 - [Lesson 1](https://github.com/Rokukkkk/TinyRenderer-CSharp/tree/5412b50a64445f3b148d21b4b3fec251d35e723e)
 - [Lesson 2](https://github.com/Rokukkkk/TinyRenderer-CSharp/tree/db9f14698edb121e7924eb0ee81cf96749b73a49)
 - [Lesson 3](https://github.com/Rokukkkk/TinyRenderer-CSharp/tree/5c03f2c54ec89f191e95513779973e816b768d05)
