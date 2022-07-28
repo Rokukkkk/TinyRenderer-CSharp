@@ -15,6 +15,7 @@
 - [Lesson 4](https://github.com/Rokukkkk/TinyRenderer-CSharp/tree/d601be7e00f4e002449fda7f4e55caa27ebbb9c3)
 - [Lesson 5](https://github.com/Rokukkkk/TinyRenderer-CSharp/tree/d8cbb5a8ab2a83dfd12230860932fcc7f854af8a)
 - [Refactored](https://github.com/Rokukkkk/TinyRenderer-CSharp/tree/515cba9f58f360131daf74de0fd5226c03584dda)
+- [Lesson 6](https://github.com/Rokukkkk/TinyRenderer-CSharp/tree/65805bbafcfff488ff9ba30d189af217e2c53497)
 
 <img src="./_img/MeshLine.png" width=32% height=32%><img src="./_img/FlatShading.png" width=32% height=32%><img src="./_img/FlatShading_Tex.png" width=32% height=32%>
 
