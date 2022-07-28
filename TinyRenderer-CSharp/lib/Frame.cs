@@ -12,15 +12,15 @@ namespace TinyRenderer_CSharp.Lib
         readonly int height;
 
         Vector3 lightDir;
+        Vector3 cameraPos;
 
         Image<Rgba32> framebuffer;
         readonly IReadOnlyCollection<TriangleInfo> model;
-        Image<Rgba32> texture;
         float[] zBuffer;
 
         IShader shader = new Shaders.Flat(false);
 
-        public Frame(ref IReadOnlyCollection<TriangleInfo> model, ref Image<Rgba32> texture, int width, int height, Vector3 lightDir, Vector3 cameraPos, int depth = 255)
+        public Frame(ref IReadOnlyCollection<TriangleInfo> model, int width, int height, Vector3 lightDir, Vector3 cameraPos, int depth = 255)
         {
             this.width = width;
             this.height = height;
@@ -30,17 +30,17 @@ namespace TinyRenderer_CSharp.Lib
 
             // Light & camera
             this.lightDir = lightDir;
+            this.cameraPos = cameraPos;
             Camera camera = new(cameraPos, Vector3.UnitY, Vector3.Zero - cameraPos);
 
             // Setups
             zBuffer = new float[width * height];
             for (int i = 0; i < width * height; i++) zBuffer[i] = float.MinValue;
             this.model = model;
-            this.texture = texture;
             MvpTools.SetMvpTools(camera, width, height, depth);
         }
 
-        public void RenderFrame(ref IShader shader)
+        public void RenderFrame(ref IShader shader, ref Image<Rgba32> texture, ref Image<Rgba32> normal, ref Image<Rgba32> specular)
         {
             // Shader
             this.shader = shader;
@@ -48,7 +48,7 @@ namespace TinyRenderer_CSharp.Lib
             Vector3[] screenCoord = new Vector3[3];
             Vector3[] worldCoord = new Vector3[3];
             Vector2[] uv = new Vector2[3];
-            Vector3[] normal = new Vector3[3];
+            Vector3[] vNormal = new Vector3[3];
 
             if (model != null)
             {
@@ -59,15 +59,15 @@ namespace TinyRenderer_CSharp.Lib
                         worldCoord[i] = item[i].Vertex;
                         screenCoord[i] = MvpTools.GetScreenCoord(worldCoord[i]);
                         uv[i] = item[i].UV;
-                        normal[i] = item[i].Normal;
+                        vNormal[i] = item[i].Normal;
                     }
 
-                    DrawTriangle(ref screenCoord, ref uv, ref normal, ref zBuffer, ref framebuffer, ref texture);
+                    DrawTriangle(ref screenCoord, ref worldCoord, ref uv, ref zBuffer, ref framebuffer, ref vNormal, ref texture, ref normal, ref specular);
                 }
             }
         }
 
-        void DrawTriangle(ref Vector3[] screenCoord, ref Vector2[] uv, ref Vector3[] normal, ref float[] zBuffer, ref Image<Rgba32> image, ref Image<Rgba32> texture)
+        void DrawTriangle(ref Vector3[] screenCoord, ref Vector3[] worldCoord, ref Vector2[] uv, ref float[] zBuffer, ref Image<Rgba32> image, ref Vector3[] vNormal, ref Image<Rgba32> texture, ref Image<Rgba32> normal, ref Image<Rgba32> specular)
         {
             Vector2 bboxMin = new(width - 1, height - 1);
             Vector2 bboxMax = new(0, 0);
@@ -94,7 +94,7 @@ namespace TinyRenderer_CSharp.Lib
                     zBuffer[i + j * width] = zInterpolation;
 
                     // Draw pixel
-                    var color = shader.GetFragment(ref texture, ref screenCoord, ref uv, baryCoord, ref normal, lightDir);
+                    var color = shader.GetFragment(ref texture, ref normal, ref specular, ref screenCoord, ref worldCoord, ref uv, baryCoord, lightDir, cameraPos, vNormal);
                     image[i, j] = color;
                 }
             }
