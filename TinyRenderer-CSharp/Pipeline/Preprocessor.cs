@@ -36,7 +36,7 @@ namespace TinyRenderer_CSharp.Pipeline
             light = new(lightDir, Vector3.UnitY, Vector3.Zero - lightDir);
 
             // Model & Geometric
-            modelFile = Model.LoadModel(Directory.GetCurrentDirectory() + @"/obj/african_head.obj");
+            modelFile = Model.LoadModel(Directory.GetCurrentDirectory() + @"/Resources/obj/african_head.obj");
             gCam = new(camera, width, height, depth);
             gLight = new(light, width, height, depth);
 

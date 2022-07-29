@@ -18,14 +18,13 @@ namespace TinyRenderer_CSharp.Shaders
         {
             // UV-interpolation (Texutre)
             Vector2 pUV = para.uv[0] * para.baryCoord.X + para.uv[1] * para.baryCoord.Y + para.uv[2] * para.baryCoord.Z;
-            float[] sIntensity = new float[3];
 
+            Vector3 h = Vector3.Normalize((para.cameraPos - Vector3.Zero) + (para.lightDir - Vector3.Zero));
+            float pSpecular = Texture.GetSpecular(para.specular, pUV);
+            float[] sIntensity = new float[3];
             for (int i = 0; i < 3; i++)
             {
-                float pSpecular = Texture.GetSpecular(para.specular, pUV);
-                Vector3 r = Vector3.Dot(2 * para.vNormal[i], para.lightDir) * para.vNormal[i] - para.lightDir;
-                r = Vector3.Normalize(r);
-                sIntensity[i] = (float)Math.Pow(Math.Max(0, r.Z), pSpecular);
+                sIntensity[i] = (float)Math.Pow(Math.Max(0, Vector3.Dot(para.vNormal[i], h)), pSpecular);
             }
 
             float intensity1 = Vector3.Dot(para.vNormal[0], para.lightDir) + sIntensity[0];

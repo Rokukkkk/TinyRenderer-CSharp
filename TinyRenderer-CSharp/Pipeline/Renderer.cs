@@ -24,9 +24,9 @@ namespace TinyRenderer_CSharp.Pipeline
 
         public void Render()
         {
-            Image<Rgba32> texture = Texture.LoadTexture(Directory.GetCurrentDirectory() + @"/obj/african_head_diffuse.tga");
-            Image<Rgba32> normal = Texture.LoadTexture(Directory.GetCurrentDirectory() + @"/obj/african_head_nm.tga");
-            Image<Rgba32> specular = Texture.LoadTexture(Directory.GetCurrentDirectory() + @"/obj/african_head_spec.tga");
+            Image<Rgba32> texture = Texture.LoadTexture(Directory.GetCurrentDirectory() + @"/Resources/obj/african_head_diffuse.tga");
+            Image<Rgba32> normal = Texture.LoadTexture(Directory.GetCurrentDirectory() + @"/Resources/obj/african_head_nm_tangent.tga");
+            Image<Rgba32> specular = Texture.LoadTexture(Directory.GetCurrentDirectory() + @"/Resources/obj/african_head_spec.tga");
 
             Vector3[] worldCoord = new Vector3[3];
             Vector3[] screenCoord = new Vector3[3];
