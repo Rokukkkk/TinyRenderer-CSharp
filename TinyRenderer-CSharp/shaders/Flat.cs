@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
-using TinyRenderer_CSharp.Lib;
+using TinyRenderer_CSharp.Libs;
 
 namespace TinyRenderer_CSharp.Shaders
 {
@@ -14,17 +14,15 @@ namespace TinyRenderer_CSharp.Shaders
             this.useTex = useTex;
         }
 
-        public Rgba32 GetFragment(ref Image<Rgba32> texture, ref Image<Rgba32> normal, ref Image<Rgba32> specular, ref Vector3[] screenCoord, ref Vector3[] worldCoord, ref Vector2[] uv, Vector3 baryCoord, Vector3 lightDir, Vector3 cameraPos, Vector3[] vNormal)
+        public Rgba32 GetFragment(ref FragmentPara para)
         {
             // UV-interpolation (Texutre)
-            Vector2 pUV = uv[0] * baryCoord.X + uv[1] * baryCoord.Y + uv[2] * baryCoord.Z;
+            Vector2 pUV = para.uv[0] * para.baryCoord.X + para.uv[1] * para.baryCoord.Y + para.uv[2] * para.baryCoord.Z;
+            Vector3 pNormal = Vector3.Normalize(Vector3.Cross(para.worldCoord[1] - para.worldCoord[0], para.worldCoord[2] - para.worldCoord[0]));
 
-            Vector3 pNormal = Vector3.Cross(worldCoord[1] - worldCoord[0], worldCoord[2] - worldCoord[0]);
-            pNormal = Vector3.Normalize(pNormal);
+            float intensity = Math.Max(0f, Vector3.Dot(pNormal, para.lightDir));
 
-            float intensity = Math.Max(0f, Vector3.Dot(pNormal, lightDir));
-            Rgba32 color = useTex ? Texture.GetColor(texture, pUV) : Color.White;
-
+            Rgba32 color = useTex ? Texture.GetColor(para.texture, pUV) : Color.White;
             return GetColor(color, intensity);
         }
 

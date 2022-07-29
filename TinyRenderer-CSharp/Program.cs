@@ -1,8 +1,6 @@
 ﻿using System.Numerics;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-
-using TinyRenderer_CSharp.Lib;
+using TinyRenderer_CSharp.Libs;
+using TinyRenderer_CSharp.Pipeline;
 
 namespace TinyRenderer_CSharp
 {
@@ -10,30 +8,17 @@ namespace TinyRenderer_CSharp
     {
         static void Main()
         {
-            string curDir = Directory.GetCurrentDirectory();
-
             // Render settings
-            int width = 2000;
-            int height = 2000;
-            Vector3 lightDir = Vector3.Normalize(new(2, 2, 1));
-            Vector3 cameraPos = new(1, 1, 3);
+            Vector2 screenSize = new(2000, 2000);
+            Vector3 lightDir = new(1, 1, 0);
+            Vector3 cameraPos = new(1, 0, 2);
+            // Shader & Texture
+            IShader shader = new Shaders.Phong(true);
 
-            bool useTexture = true;
-            IShader shader = new Shaders.Phong(useTexture);
-
-            IReadOnlyCollection<TriangleInfo> model = Model.LoadModel(curDir + @"/obj/african_head.obj");
-            Image<Rgba32> texture = Texture.LoadTexture(curDir + @"/obj/african_head_diffuse.tga");
-            Image<Rgba32> normal = Texture.LoadTexture(curDir + @"/obj/african_head_nm.tga");
-            Image<Rgba32> specular = Texture.LoadTexture(curDir + @"/obj/african_head_spec.tga");
-
-            // Initiate the frame
-            Frame frame = new(ref model, width, height, lightDir, cameraPos);
-
-            // Render the frame
-            frame.RenderFrame(ref shader, ref texture, ref normal, ref specular);
-
-            // Save the frame
-            frame.SaveFrame(curDir);
+            // Rendering
+            Preprocessor frame = new(screenSize, lightDir, cameraPos, shader);
+            Renderer renderer = new(ref frame); renderer.Render();
+            PostProcessing.Save(ref frame);
         }
     }
 }

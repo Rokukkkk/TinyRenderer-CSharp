@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace TinyRenderer_CSharp.Lib
+namespace TinyRenderer_CSharp.Libs
 {
     public struct TriangleInfo
     {
