@@ -15,6 +15,7 @@
 - [Lesson 4](https://github.com/Rokukkkk/TinyRenderer-CSharp/tree/d601be7e00f4e002449fda7f4e55caa27ebbb9c3)
 - [Lesson 5](https://github.com/Rokukkkk/TinyRenderer-CSharp/tree/d8cbb5a8ab2a83dfd12230860932fcc7f854af8a)
 - [Lesson 6](https://github.com/Rokukkkk/TinyRenderer-CSharp/tree/65805bbafcfff488ff9ba30d189af217e2c53497)
+- [Lesson 6b(Tangent Normal Map)](https://github.com/Rokukkkk/TinyRenderer-CSharp/tree/13344c563cb56539d8cafe45fd00d98700d33fc5)
 
 <img src="./_img/MeshLine.png" width=32% height=32%><img src="./_img/FlatShading.png" width=32% height=32%><img src="./_img/FlatShading_Tex.png" width=32% height=32%>
 
