@@ -9,7 +9,7 @@ namespace TinyRenderer_CSharp.Pipeline
         {
             // Flip the frame
             frame.frameBuffer.Mutate(x => x.RotateFlip(RotateMode.None, FlipMode.Vertical));
-            frame.frameBuffer.SaveAsTga(Directory.GetCurrentDirectory() + "/out.tga");
+            frame.frameBuffer.SaveAsPng(Directory.GetCurrentDirectory() + "/out.png");
         }
     }
 }

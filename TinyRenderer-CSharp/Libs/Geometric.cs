@@ -74,7 +74,7 @@ namespace TinyRenderer_CSharp.Libs
         static Matrix4x4 GetProjectionMatrix(Camera camera)
         {
             Matrix4x4 projection = Matrix4x4.Identity;
-            projection.M43 = -1f / camera.Position.Z;
+            projection.M43 = -1f / Vector3.Distance(Vector3.Zero, camera.Position);
             projection.M44 = 0.1f;
 
             return projection;
