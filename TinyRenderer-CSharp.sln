@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 25.0.1700.6
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TinyRenderer-CSharp", "TinyRenderer-CSharp\TinyRenderer-CSharp.csproj", "{806A9B0D-A52E-495F-81B9-ECA0AD01B231}"
 EndProject
