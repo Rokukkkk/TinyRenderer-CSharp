@@ -22,6 +22,8 @@ namespace TinyRenderer_CSharp.Pipeline
 
         public IShader shader;
 
+        public float[,] zBuffer;
+        public float[,] shadowBuffer;
 
         public Preprocessor(Vector2 screenSize, Vector3 lightDir, Vector3 cameraPos, IShader shader)
         {
@@ -42,6 +44,10 @@ namespace TinyRenderer_CSharp.Pipeline
 
             // Shader
             this.shader = shader;
+
+            // Buffers
+            zBuffer = new float[width, height];
+            shadowBuffer = new float[width, height];
         }
     }
 }

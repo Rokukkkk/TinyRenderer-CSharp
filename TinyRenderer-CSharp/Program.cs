@@ -18,6 +18,8 @@ namespace TinyRenderer_CSharp
             // Rendering
             Preprocessor frame = new(screenSize, lightDir, cameraPos, shader);
             Renderer renderer = new(ref frame); renderer.Render();
+            // SSAO
+            //PostProcessing.SSAO(ref frame); 
             PostProcessing.Save(ref frame);
         }
     }

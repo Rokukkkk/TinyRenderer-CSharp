@@ -8,22 +8,19 @@ namespace TinyRenderer_CSharp.Pipeline
     public class Renderer
     {
         readonly Preprocessor frame;
-        readonly float[,] zBuffer;
-        readonly float[,] shadowBuffer;
-
 
         public Renderer(ref Preprocessor segFrame)
         {
             frame = segFrame;
 
-            zBuffer = new float[frame.width, frame.height];
-            shadowBuffer = new float[frame.width, frame.height];
+            frame.zBuffer = new float[frame.width, frame.height];
+            frame.shadowBuffer = new float[frame.width, frame.height];
             for (int i = 0; i < frame.width; i++)
             {
                 for (int j = 0; j < frame.height; j++)
                 {
-                    zBuffer[i, j] = float.MinValue;
-                    shadowBuffer[i, j] = float.MinValue;
+                    frame.zBuffer[i, j] = float.MinValue;
+                    frame.shadowBuffer[i, j] = float.MinValue;
                 }
             }
         }
@@ -33,6 +30,11 @@ namespace TinyRenderer_CSharp.Pipeline
             Image<Rgba32> texture = Texture.LoadTexture(Directory.GetCurrentDirectory() + @"/Resources/obj/african_head_diffuse.tga");
             Image<Rgba32> normal = Texture.LoadTexture(Directory.GetCurrentDirectory() + @"/Resources/obj/african_head_nm_tangent.tga");
             Image<Rgba32> specular = Texture.LoadTexture(Directory.GetCurrentDirectory() + @"/Resources/obj/african_head_spec.tga");
+
+            var eyeBallModel = Model.LoadModel(Directory.GetCurrentDirectory() + @"/Resources/obj/african_head_eye_inner.obj"); 
+            Image<Rgba32> eyeTexture = Texture.LoadTexture(Directory.GetCurrentDirectory() + @"/Resources/obj/african_head_eye_inner_diffuse.tga");
+            Image<Rgba32> eyeNormal = Texture.LoadTexture(Directory.GetCurrentDirectory() + @"/Resources/obj/african_head_eye_inner_nm_tangent.tga");
+            Image<Rgba32> eyeSpecular = Texture.LoadTexture(Directory.GetCurrentDirectory() + @"/Resources/obj/african_head_eye_inner_spec.tga");
 
             Vector3[] worldCoord = new Vector3[3];
             Vector3[] screenCoord = new Vector3[3];
@@ -63,6 +65,30 @@ namespace TinyRenderer_CSharp.Pipeline
                     Draw(ref screenCoord, ref worldCoord, ref uv, ref vNormal, ref texture, ref normal, ref specular);
                 }
             }
+
+            if (eyeBallModel != null)
+            {
+                foreach (var triangle in eyeBallModel)
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        shadowBufferCoord[i] = frame.gLight.GetScreenCoord(triangle[i].Vertex);
+                    }
+                    ShadowBuffering(ref shadowBufferCoord);
+                }
+
+                foreach (var triangle in eyeBallModel)
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        worldCoord[i] = triangle[i].Vertex;
+                        screenCoord[i] = frame.gCam.GetScreenCoord(triangle[i].Vertex);
+                        uv[i] = triangle[i].UV;
+                        vNormal[i] = triangle[i].Normal;
+                    }
+                    Draw(ref screenCoord, ref worldCoord, ref uv, ref vNormal, ref eyeTexture, ref eyeNormal, ref eyeSpecular);
+                }
+            }
         }
 
         void ShadowBuffering(ref Vector3[] shadowCoord)
@@ -85,8 +111,8 @@ namespace TinyRenderer_CSharp.Pipeline
                     if (baryCoord.X < 0 || baryCoord.Y < 0 || baryCoord.Z < 0) continue;
 
                     float shadowInterpolation = baryCoord.X * shadowCoord[0].Z + baryCoord.Y * shadowCoord[1].Z + baryCoord.Z * shadowCoord[2].Z;
-                    if (shadowInterpolation < shadowBuffer[i, j]) continue;
-                    shadowBuffer[i, j] = shadowInterpolation;
+                    if (shadowInterpolation < frame.shadowBuffer[i, j]) continue;
+                    frame.shadowBuffer[i, j] = shadowInterpolation;
                 }
             }
         }
@@ -113,9 +139,8 @@ namespace TinyRenderer_CSharp.Pipeline
 
                     // Z-interpolation
                     float zInterpolation = baryCoord.X * screenCoord[0].Z + baryCoord.Y * screenCoord[1].Z + baryCoord.Z * screenCoord[2].Z;
-                    if (zInterpolation < zBuffer[i, j]) continue;
-                    zBuffer[i, j] = zInterpolation;
-
+                    if (zInterpolation < frame.zBuffer[i, j]) continue;
+                    frame.zBuffer[i, j] = zInterpolation;
 
                     // Shadow mapping
                     Vector3 pShadow = baryCoord.X * screenCoord[0] + baryCoord.Y * screenCoord[1] + baryCoord.Z * screenCoord[2];
@@ -124,7 +149,7 @@ namespace TinyRenderer_CSharp.Pipeline
                     if (!Matrix4x4.Invert(camMvp, out Matrix4x4 inCam)) continue;
                     pShadowM = inCam * pShadowM; pShadowM = lightMvp * pShadowM;
                     pShadowM.M11 /= pShadowM.M41; pShadowM.M21 /= pShadowM.M41; pShadowM.M31 /= pShadowM.M41;
-                    float shadow = 0.3f + 0.7f * (shadowBuffer[(int)pShadowM.M11, (int)pShadowM.M21] < pShadowM.M31 + 5 ? 1f : 0f);
+                    float shadow = 0.3f + 0.7f * (frame.shadowBuffer[(int)pShadowM.M11, (int)pShadowM.M21] < pShadowM.M31 + 5 ? 1f : 0f);
 
                     // Draw pixel
                     FragmentPara para = new(ref texture, ref normal, ref specular, ref screenCoord, ref worldCoord, ref uv, ref baryCoord, ref frame.lightDir, ref frame.cameraPos, ref vNormal, ref zInterpolation, ref shadow);
@@ -133,6 +158,23 @@ namespace TinyRenderer_CSharp.Pipeline
                     frame.frameBuffer[i, j] = color;
                 }
             }
+        }
+
+        // For calculating SSAO
+        float GetMaxEleAngle(Vector2 p, Vector2 dir)
+        {
+            float maxEleAngle = 0f;
+            for (int i = 0; i < 1000; i++)
+            {
+                Vector2 cur = p + dir * i;
+                if (cur.X >= frame.width || cur.Y >= frame.height || cur.X <= 0 || cur.Y <= 0) return maxEleAngle;
+
+                float distance = Vector2.Distance(p, cur);
+                if (distance < 1) continue;
+                float ele = frame.zBuffer[(int)cur.X, (int)cur.Y] - frame.zBuffer[(int)p.X, (int)p.Y];
+                maxEleAngle = Math.Max(maxEleAngle, (float)Math.Atan(ele / distance));
+            }
+            return maxEleAngle;
         }
     }
 }
