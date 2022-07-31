@@ -31,7 +31,7 @@ namespace TinyRenderer_CSharp.Pipeline
             Image<Rgba32> normal = Texture.LoadTexture(Directory.GetCurrentDirectory() + @"/Resources/obj/african_head_nm_tangent.tga");
             Image<Rgba32> specular = Texture.LoadTexture(Directory.GetCurrentDirectory() + @"/Resources/obj/african_head_spec.tga");
 
-            var eyeBallModel = Model.LoadModel(Directory.GetCurrentDirectory() + @"/Resources/obj/african_head_eye_inner.obj"); 
+            var eyeBallModel = Model.LoadModel(Directory.GetCurrentDirectory() + @"/Resources/obj/african_head_eye_inner.obj");
             Image<Rgba32> eyeTexture = Texture.LoadTexture(Directory.GetCurrentDirectory() + @"/Resources/obj/african_head_eye_inner_diffuse.tga");
             Image<Rgba32> eyeNormal = Texture.LoadTexture(Directory.GetCurrentDirectory() + @"/Resources/obj/african_head_eye_inner_nm_tangent.tga");
             Image<Rgba32> eyeSpecular = Texture.LoadTexture(Directory.GetCurrentDirectory() + @"/Resources/obj/african_head_eye_inner_spec.tga");
@@ -127,7 +127,6 @@ namespace TinyRenderer_CSharp.Pipeline
             bboxMax.X = (new float[] { bboxMax.X, screenCoord[0].X, screenCoord[1].X, screenCoord[2].X }).Max();
             bboxMax.Y = (new float[] { bboxMax.Y, screenCoord[0].Y, screenCoord[1].Y, screenCoord[2].Y }).Max();
 
-
             for (int i = (int)bboxMin.X; i <= bboxMax.X; i++)
             {
                 for (int j = (int)bboxMin.Y; j <= bboxMax.Y; j++)
@@ -158,23 +157,6 @@ namespace TinyRenderer_CSharp.Pipeline
                     frame.frameBuffer[i, j] = color;
                 }
             }
-        }
-
-        // For calculating SSAO
-        float GetMaxEleAngle(Vector2 p, Vector2 dir)
-        {
-            float maxEleAngle = 0f;
-            for (int i = 0; i < 1000; i++)
-            {
-                Vector2 cur = p + dir * i;
-                if (cur.X >= frame.width || cur.Y >= frame.height || cur.X <= 0 || cur.Y <= 0) return maxEleAngle;
-
-                float distance = Vector2.Distance(p, cur);
-                if (distance < 1) continue;
-                float ele = frame.zBuffer[(int)cur.X, (int)cur.Y] - frame.zBuffer[(int)p.X, (int)p.Y];
-                maxEleAngle = Math.Max(maxEleAngle, (float)Math.Atan(ele / distance));
-            }
-            return maxEleAngle;
         }
     }
 }

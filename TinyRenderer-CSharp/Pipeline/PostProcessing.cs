@@ -14,9 +14,9 @@ namespace TinyRenderer_CSharp.Pipeline
             frame.frameBuffer.SaveAsPng(Directory.GetCurrentDirectory() + "/out.png");
         }
 
+        // SSAO
         public static void SSAO(ref Preprocessor frame)
         {
-            // SSAO
             for (int i = 0; i < frame.width; i++)
             {
                 for (int j = 0; j < frame.height; j++)
