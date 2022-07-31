@@ -3,9 +3,7 @@
 > Original repository:
 > [ssloy/tinyrenderer : A brief computer graphics / rendering course](https://github.com/ssloy/tinyrenderer)
 
-<div align=center><img src="./_img/Cam.png" width=30% height=30% ></div>
-
-</br>
+<div align=center><img src="./_img/Cam.png" width=25% height=25% ></div>
 
 ## Snapshots for every lessons:
 

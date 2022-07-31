@@ -10,8 +10,8 @@ namespace TinyRenderer_CSharp
         {
             // Render settings
             Vector2 screenSize = new(2000, 2000);
-            Vector3 lightDir = new(1, 1, 0);
-            Vector3 cameraPos = new(1, 1, 2);
+            Vector3 lightDir = new(1, 1, 1);
+            Vector3 cameraPos = new(1, 1, 3);
             // Shader & Texture
             IShader shader = new Shaders.Phong(true);
 

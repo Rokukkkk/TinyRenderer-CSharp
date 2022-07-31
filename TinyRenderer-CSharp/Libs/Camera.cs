@@ -4,9 +4,9 @@ namespace TinyRenderer_CSharp.Libs
 {
     public struct Camera
     {
-        public Vector3 Position = Vector3.Zero;
-        public Vector3 WorldUp = Vector3.UnitY;
-        public Vector3 Front = -Vector3.UnitZ;
+        public Vector3 Position;
+        public Vector3 WorldUp;
+        public Vector3 Front;
         public Vector3 Right;
         public Vector3 Up;
 
