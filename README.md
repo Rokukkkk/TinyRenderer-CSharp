@@ -3,7 +3,7 @@
 > Original repository:
 > [ssloy/tinyrenderer : A brief computer graphics / rendering course](https://github.com/ssloy/tinyrenderer)
 
-<div align=center><img src="./_img/Cam.png" width=25% height=25% ></div>
+<div align=center><img src="./_img/Cam.png" width=40% height=40% ></div>
 
 ## Snapshots for every lessons:
 
@@ -14,6 +14,8 @@
 - [Lesson 5](https://github.com/Rokukkkk/TinyRenderer-CSharp/tree/d8cbb5a8ab2a83dfd12230860932fcc7f854af8a)
 - [Lesson 6](https://github.com/Rokukkkk/TinyRenderer-CSharp/tree/65805bbafcfff488ff9ba30d189af217e2c53497)
 - [Lesson 6b(Tangent Normal Map)](https://github.com/Rokukkkk/TinyRenderer-CSharp/tree/13344c563cb56539d8cafe45fd00d98700d33fc5)
+- [Lesson 7](https://github.com/Rokukkkk/TinyRenderer-CSharp/tree/55f19b97ec1b6dfd4ecb4234b3390cdd72441b31)
+- [Lesson 8](https://github.com/Rokukkkk/TinyRenderer-CSharp/tree/5951be226b4168a5b027ba2d3dbfcf0443052c29)
 
 <img src="./_img/MeshLine.png" width=32% height=32%><img src="./_img/FlatShading.png" width=32% height=32%><img src="./_img/FlatShading_Tex.png" width=32% height=32%>
 
