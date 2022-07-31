@@ -1,6 +1,6 @@
-﻿using System.Numerics;
-using SixLabors.ImageSharp;
+﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using System.Numerics;
 using TinyRenderer_CSharp.Libs;
 
 namespace TinyRenderer_CSharp.Pipeline
@@ -8,18 +8,24 @@ namespace TinyRenderer_CSharp.Pipeline
     public class Renderer
     {
         readonly Preprocessor frame;
-        readonly float[] zBuffer;
-        readonly float[] shadowBuffer;
+        readonly float[,] zBuffer;
+        readonly float[,] shadowBuffer;
 
 
         public Renderer(ref Preprocessor segFrame)
         {
             frame = segFrame;
 
-            zBuffer = new float[frame.width * frame.width];
-            for (int i = 0; i < frame.width * frame.height; i++) zBuffer[i] = float.MinValue;
-            shadowBuffer = new float[frame.width * frame.width];
-            for (int i = 0; i < frame.width * frame.height; i++) shadowBuffer[i] = float.MinValue;
+            zBuffer = new float[frame.width, frame.height];
+            shadowBuffer = new float[frame.width, frame.height];
+            for (int i = 0; i < frame.width; i++)
+            {
+                for (int j = 0; j < frame.height; j++)
+                {
+                    zBuffer[i, j] = float.MinValue;
+                    shadowBuffer[i, j] = float.MinValue;
+                }
+            }
         }
 
         public void Render()
@@ -76,12 +82,11 @@ namespace TinyRenderer_CSharp.Pipeline
                     Vector3 p = new(i, j, 0);
                     Vector3 baryCoord = Geometric.GetBarycentric(shadowCoord, p);
 
-                    if (baryCoord.X <= -0.001 || baryCoord.Y <= -0.001 || baryCoord.Z <= -0.001) continue;
+                    if (baryCoord.X < 0 || baryCoord.Y < 0 || baryCoord.Z < 0) continue;
 
                     float shadowInterpolation = baryCoord.X * shadowCoord[0].Z + baryCoord.Y * shadowCoord[1].Z + baryCoord.Z * shadowCoord[2].Z;
-
-                    if (shadowInterpolation < shadowBuffer[i + j * frame.width]) continue;
-                    shadowBuffer[i + j * frame.width] = shadowInterpolation;
+                    if (shadowInterpolation < shadowBuffer[i, j]) continue;
+                    shadowBuffer[i, j] = shadowInterpolation;
                 }
             }
         }
@@ -96,6 +101,7 @@ namespace TinyRenderer_CSharp.Pipeline
             bboxMax.X = (new float[] { bboxMax.X, screenCoord[0].X, screenCoord[1].X, screenCoord[2].X }).Max();
             bboxMax.Y = (new float[] { bboxMax.Y, screenCoord[0].Y, screenCoord[1].Y, screenCoord[2].Y }).Max();
 
+
             for (int i = (int)bboxMin.X; i <= bboxMax.X; i++)
             {
                 for (int j = (int)bboxMin.Y; j <= bboxMax.Y; j++)
@@ -103,16 +109,25 @@ namespace TinyRenderer_CSharp.Pipeline
                     Vector3 p = new(i, j, 0);
                     Vector3 baryCoord = Geometric.GetBarycentric(screenCoord, p);
 
-                    if (baryCoord.X <= -0.001 || baryCoord.Y <= -0.001 || baryCoord.Z <= -0.001) continue;
+                    if (baryCoord.X < 0 || baryCoord.Y < 0 || baryCoord.Z < 0) continue;
 
                     // Z-interpolation
                     float zInterpolation = baryCoord.X * screenCoord[0].Z + baryCoord.Y * screenCoord[1].Z + baryCoord.Z * screenCoord[2].Z;
+                    if (zInterpolation < zBuffer[i, j]) continue;
+                    zBuffer[i, j] = zInterpolation;
 
-                    if (zInterpolation < zBuffer[i + j * frame.width]) continue;
-                    zBuffer[i + j * frame.width] = zInterpolation;
+
+                    // Shadow mapping
+                    Vector3 pShadow = baryCoord.X * screenCoord[0] + baryCoord.Y * screenCoord[1] + baryCoord.Z * screenCoord[2];
+                    Matrix4x4 pShadowM = new() { M11 = pShadow.X, M21 = pShadow.Y, M31 = pShadow.Z, M41 = 1.0f };
+                    Matrix4x4 lightMvp = frame.gLight.GetMvp(); Matrix4x4 camMvp = frame.gCam.GetMvp();
+                    if (!Matrix4x4.Invert(camMvp, out Matrix4x4 inCam)) continue;
+                    pShadowM = inCam * pShadowM; pShadowM = lightMvp * pShadowM;
+                    pShadowM.M11 /= pShadowM.M41; pShadowM.M21 /= pShadowM.M41; pShadowM.M31 /= pShadowM.M41;
+                    float shadow = 0.3f + 0.7f * (shadowBuffer[(int)pShadowM.M11, (int)pShadowM.M21] < pShadowM.M31 + 5 ? 1f : 0f);
 
                     // Draw pixel
-                    FragmentPara para = new(ref texture, ref normal, ref specular, ref screenCoord, ref worldCoord, ref uv, ref baryCoord, ref frame.lightDir, ref frame.cameraPos, ref vNormal, ref zInterpolation);
+                    FragmentPara para = new(ref texture, ref normal, ref specular, ref screenCoord, ref worldCoord, ref uv, ref baryCoord, ref frame.lightDir, ref frame.cameraPos, ref vNormal, ref zInterpolation, ref shadow);
                     Rgba32 color = frame.shader.GetFragment(ref para);
 
                     frame.frameBuffer[i, j] = color;

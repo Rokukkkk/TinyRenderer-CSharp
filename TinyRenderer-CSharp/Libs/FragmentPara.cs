@@ -1,6 +1,6 @@
-﻿using System.Numerics;
-using SixLabors.ImageSharp;
+﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using System.Numerics;
 
 namespace TinyRenderer_CSharp.Libs
 {
@@ -17,8 +17,9 @@ namespace TinyRenderer_CSharp.Libs
         public Vector3 cameraPos;
         public Vector3[] vNormal;
         public float zInterpolation;
+        public float shadow;
 
-        public FragmentPara(ref Image<Rgba32> texture, ref Image<Rgba32> normal, ref Image<Rgba32> specular, ref Vector3[] screenCoord, ref Vector3[] worldCoord, ref Vector2[] uv, ref Vector3 baryCoord, ref Vector3 lightDir, ref Vector3 cameraPos, ref Vector3[] vNormal, ref float zInterpolation)
+        public FragmentPara(ref Image<Rgba32> texture, ref Image<Rgba32> normal, ref Image<Rgba32> specular, ref Vector3[] screenCoord, ref Vector3[] worldCoord, ref Vector2[] uv, ref Vector3 baryCoord, ref Vector3 lightDir, ref Vector3 cameraPos, ref Vector3[] vNormal, ref float zInterpolation, ref float shadow)
         {
             this.texture = texture;
             this.normal = normal;
@@ -31,6 +32,7 @@ namespace TinyRenderer_CSharp.Libs
             this.cameraPos = cameraPos;
             this.vNormal = vNormal;
             this.zInterpolation = zInterpolation;
+            this.shadow = shadow;
         }
     }
 }

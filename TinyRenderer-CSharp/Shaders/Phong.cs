@@ -1,6 +1,6 @@
-﻿using System.Numerics;
-using SixLabors.ImageSharp;
+﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using System.Numerics;
 using TinyRenderer_CSharp.Libs;
 
 namespace TinyRenderer_CSharp.Shaders
@@ -28,7 +28,7 @@ namespace TinyRenderer_CSharp.Shaders
             float sIntensity = (float)Math.Pow(Math.Max(0, Vector3.Dot(pNormal, h)), pSpecular);
 
             Rgba32 color = useTex ? Texture.GetColor(para.texture, pUV) : Color.White;
-            return GetColor(color, 1.0f * intensity + 0.6f * sIntensity);
+            return GetColor(color, (intensity + 0.6f * sIntensity) * para.shadow);
         }
 
         public Vector3 GetVertex(Vector3 vertex)

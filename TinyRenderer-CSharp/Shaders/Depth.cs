@@ -1,5 +1,5 @@
-﻿using System.Numerics;
-using SixLabors.ImageSharp.PixelFormats;
+﻿using SixLabors.ImageSharp.PixelFormats;
+using System.Numerics;
 using TinyRenderer_CSharp.Libs;
 
 namespace TinyRenderer_CSharp.Shaders

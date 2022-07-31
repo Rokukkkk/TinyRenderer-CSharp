@@ -13,7 +13,7 @@ namespace TinyRenderer_CSharp
             Vector3 lightDir = new(1, 1, 1);
             Vector3 cameraPos = new(1, 1, 3);
             // Shader & Texture
-            IShader shader = new Shaders.Depth(true);
+            IShader shader = new Shaders.Phong(true);
 
             // Rendering
             Preprocessor frame = new(screenSize, lightDir, cameraPos, shader);

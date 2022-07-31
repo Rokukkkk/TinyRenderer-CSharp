@@ -1,6 +1,6 @@
-﻿using System.Numerics;
-using SixLabors.ImageSharp;
+﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using System.Numerics;
 using TinyRenderer_CSharp.Libs;
 
 namespace TinyRenderer_CSharp.Pipeline
@@ -23,7 +23,7 @@ namespace TinyRenderer_CSharp.Pipeline
         public IShader shader;
 
 
-        public Preprocessor(Vector2 screenSize, Vector3 lightDir, Vector3 cameraPos, IShader shader, int depth = 255)
+        public Preprocessor(Vector2 screenSize, Vector3 lightDir, Vector3 cameraPos, IShader shader)
         {
             // Width & Height
             width = (int)screenSize.X; height = (int)screenSize.Y;
@@ -37,8 +37,8 @@ namespace TinyRenderer_CSharp.Pipeline
 
             // Model & Geometric
             modelFile = Model.LoadModel(Directory.GetCurrentDirectory() + @"/Resources/obj/african_head.obj");
-            gCam = new(camera, width, height, depth);
-            gLight = new(light, width, height, depth);
+            gCam = new(camera, width, height);
+            gLight = new(light, width, height);
 
             // Shader
             this.shader = shader;
